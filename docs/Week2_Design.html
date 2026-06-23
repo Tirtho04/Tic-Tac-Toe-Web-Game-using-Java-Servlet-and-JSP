@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 2 – System Design and Architecture</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+    padding: 24px;
+    color: #111;
+  }
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #fff;
+    border: 2px solid #1a2e4a;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    background: #1a2e4a;
+    color: #fff;
+    text-align: center;
+    padding: 14px 20px;
+    font-size: 17px;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  /* ── Top row: Wireframe + UML ── */
+  .top-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 2px solid #1a2e4a;
+  }
+
+  /* ── Section headers ── */
+  .section-header {
+    background: #2563a8;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 7px 14px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ─────────────────────────────────────
+     1. WIREFRAME
+  ───────────────────────────────────── */
+  .wireframe-col {
+    border-right: 2px solid #1a2e4a;
+    padding-bottom: 16px;
+  }
+  .wireframe-body {
+    padding: 16px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .board-mock {
+    flex-shrink: 0;
+  }
+  .board-title {
+    background: #1a2e4a;
+    color: #fff;
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 6px 10px;
+    letter-spacing: 0.5px;
+  }
+  .board-turn {
+    border: 1px solid #aaa;
+    border-top: none;
+    text-align: center;
+    font-size: 10px;
+    padding: 4px;
+    background: #f9f9f9;
+  }
+  .board-turn span { font-weight: bold; color: #2563a8; }
+  .board-grid {
+    border-collapse: collapse;
+    width: 150px;
+  }
+  .board-grid td {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #1a2e4a;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 22px;
+    font-weight: bold;
+  }
+  .x-mark { color: #2563a8; }
+  .o-mark { color: #c0392b; }
+  .score-bar {
+    border: 1px solid #aaa;
+    text-align: center;
+    font-size: 10px;
+    padding: 5px 8px;
+    background: #f9f9f9;
+    margin-top: 2px;
+  }
+  .score-bar .sx { color: #2563a8; font-weight: bold; }
+  .score-bar .so { color: #c0392b; font-weight: bold; }
+  .new-game-btn {
+    display: block;
+    margin: 6px auto 0;
+    background: #2563a8;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 18px;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: default;
+    width: 100%;
+  }
+  .winner-area {
+    border: 1px solid #aaa;
+    background: #fffde7;
+    text-align: center;
+    font-size: 10px;
+    color: #888;
+    padding: 6px 4px;
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .design-features {
+    font-size: 11px;
+  }
+  .design-features h4 {
+    font-size: 11px;
+    margin-bottom: 6px;
+    color: #1a2e4a;
+    font-weight: bold;
+  }
+  .design-features li {
+    margin-bottom: 5px;
+    padding-left: 4px;
+    line-height: 1.4;
+    list-style: disc;
+    margin-left: 14px;
+    color: #222;
+  }
+
+  /* ─────────────────────────────────────
+     2. UML CLASS DIAGRAM
+  ───────────────────────────────────── */
+  .uml-col {
+    padding-bottom: 16px;
+  }
+  .uml-body {
+    padding: 14px 16px;
+  }
+  .uml-classes {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .uml-box {
+    border: 1.5px solid #1a2e4a;
+    font-size: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+  .uml-box-title {
+    background: #1a2e4a;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 5px 4px;
+  }
+  .uml-section {
+    padding: 5px 7px;
+    border-top: 1px solid #1a2e4a;
+    line-height: 1.7;
+    color: #222;
+  }
+  .uml-section.fields { background: #fafafa; }
+  .uml-section.methods { background: #fff; }
+
+  /* Relationship arrow area */
+  .uml-relations {
+    margin-top: 8px;
+  }
+  .uml-arrow-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 10px;
+  }
+  .arrow-line {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+  }
+  .arrow-label {
+    font-size: 9px;
+    color: #555;
+    white-space: nowrap;
+    background: #fff;
+    padding: 0 4px;
+  }
+  svg.rel-arrow { overflow: visible; }
+
+  /* UML connector between GameLogic and index.jsp via Servlet */
+  .uml-connector {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border: 1px solid #bbb;
+    background: #f7f7f7;
+    font-size: 10px;
+  }
+  .uml-connector h4 {
+    font-weight: bold;
+    font-size: 10px;
+    margin-bottom: 5px;
+    color: #1a2e4a;
+  }
+  .resp-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+  .resp-dot {
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid #1a2e4a;
+    background: #fff;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ─────────────────────────────────────
+     3. MVC ARCHITECTURE
+  ───────────────────────────────────── */
+  .mvc-row {
+    padding: 0 0 16px;
+  }
+  .mvc-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1.5fr;
+    gap: 0;
+    padding: 14px 16px;
+  }
+  .mvc-col {
+    border: 1.5px solid #ccc;
+    padding: 10px;
+    font-size: 10px;
+    margin: 0 4px;
+  }
+  .mvc-col-header {
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1.5px solid #ccc;
+  }
+  .mvc-col-header.model  { color: #1a2e4a; }
+  .mvc-col-header.view   { color: #2563a8; }
+  .mvc-col-header.ctrl   { color: #c45a0a; }
+  .mvc-col-header.flow   { color: #1a2e4a; }
+  .mvc-file {
+    font-weight: bold;
+    font-size: 10px;
+    margin-bottom: 5px;
+    color: #111;
+  }
+  .mvc-col ul {
+    padding-left: 12px;
+    line-height: 1.65;
+    color: #333;
+  }
+  .mvc-col ul li { list-style: disc; margin-bottom: 2px; }
+
+  /* MVC Flow diagram */
+  .mvc-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    font-size: 9.5px;
+  }
+  .flow-node {
+    border: 1.5px solid #1a2e4a;
+    background: #fff;
+    text-align: center;
+    padding: 5px 10px;
+    font-size: 10px;
+    width: 130px;
+    font-weight: bold;
+  }
+  .flow-node.user-node {
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    background: #e8f0fb;
+    border-color: #2563a8;
+    margin: 0 auto;
+  }
+  .flow-node.view-node  { background: #e8f0fb; border-color: #2563a8; }
+  .flow-node.ctrl-node  { background: #fff3e0; border-color: #c45a0a; }
+  .flow-node.model-node { background: #f9f9f9; border-color: #1a2e4a; }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 3px 0;
+    font-size: 9px;
+    color: #444;
+    width: 100%;
+    justify-content: center;
+  }
+  .flow-arrow-line {
+    height: 1px;
+    width: 24px;
+    background: #555;
+    position: relative;
+  }
+  .flow-arrow-line::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: -4px;
+    border: 5px solid transparent;
+    border-left: 6px solid #555;
+  }
+  .step-num {
+    color: #2563a8;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ── PAGE HEADER ────────────────────── -->
+  <div class="page-header">WEEK 2: SYSTEM DESIGN AND ARCHITECTURE</div>
+
+  <!-- ── TOP ROW ────────────────────────── -->
+  <div class="top-row">
+
+    <!-- ── 1. WIREFRAME ─────────────────── -->
+    <div class="wireframe-col">
+      <div class="section-header">1. WIREFRAME DESIGN</div>
+      <div class="wireframe-body">
+
+        <!-- Board mock -->
+        <div class="board-mock">
+          <div class="board-title">TIC TAC TOE GAME</div>
+          <div class="board-turn">Current Turn: <span>X</span></div>
+          <table class="board-grid">
+            <tr>
+              <td><span class="x-mark">X</span></td>
+              <td><span class="o-mark">O</span></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><span class="x-mark">X</span></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><span class="o-mark">O</span></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
+          <div class="score-bar">
+            Current Score<br>
+            <span class="sx">Player X : 3</span> &nbsp;|&nbsp; <span class="so">Player O : 2</span>
+          </div>
+          <button class="new-game-btn">New Game</button>
+          <div class="winner-area">Winner Message Area</div>
+        </div>
+
+        <!-- Design features -->
+        <div class="design-features">
+          <h4>Design Features</h4>
+          <ul>
+            <li>Responsive 3×3 game board.</li>
+            <li>Current player's turn displayed at the top.</li>
+            <li>Winner or draw notification area.</li>
+            <li>Session-based scoreboard.</li>
+            <li>New Game button to reset the board.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div><!-- /wireframe-col -->
+
+    <!-- ── 2. UML CLASS DIAGRAM ─────────── -->
+    <div class="uml-col">
+      <div class="section-header">2. UML CLASS DIAGRAM</div>
+      <div class="uml-body">
+
+        <div class="uml-classes">
+
+          <!-- GameLogic -->
+          <div class="uml-box" style="flex:1.15">
+            <div class="uml-box-title">GameLogic</div>
+            <div class="uml-section fields">
+              – board: char[3][3]<br>
+              – currentPlayer: char
+            </div>
+            <div class="uml-section methods">
+              + makeMove(row: int, col: int): boolean<br>
+              + checkWinner(): char<br>
+              + isDraw(): boolean<br>
+              + resetBoard(): void<br>
+              + getBoard(): char[][]<br>
+              + getCurrentPlayer(): char
+            </div>
+          </div>
+
+          <!-- Middle: GameServlet + arrow labels -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:30px;flex:0.9">
+            <div class="uml-box" style="width:100%">
+              <div class="uml-box-title">GameServlet</div>
+              <div class="uml-section fields">
+                – game: GameLogic<br>
+                – session: HttpSession
+              </div>
+              <div class="uml-section methods">
+                + doGet(req, res): void<br>
+                + doPost(req, res): void
+              </div>
+            </div>
+
+            <!-- uses arrow -->
+            <div style="text-align:center;font-size:9px;color:#555;width:100%">
+              <div style="border-top:1px dashed #777;margin:4px 0;position:relative;">
+                <span style="position:absolute;right:-2px;top:-6px;font-size:12px;">→</span>
+                <span style="position:absolute;left:50%;transform:translateX(-50%);top:-7px;background:#fff;padding:0 3px;font-size:9px;">Redirect (PRG)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- index.jsp -->
+          <div class="uml-box" style="flex:0.9">
+            <div class="uml-box-title">index.jsp</div>
+            <div class="uml-section methods" style="line-height:1.9">
+              – Displays board<br>
+              – Shows messages<br>
+              &nbsp;&nbsp;(turn, winner, draw)<br>
+              – Shows scores<br>
+              – Submits moves
+            </div>
+          </div>
+
+        </div><!-- /uml-classes -->
+
+        <!-- Class Responsibilities -->
+        <div class="uml-connector">
+          <h4>Class Responsibilities</h4>
+          <div class="resp-row">
+            <div class="resp-dot"></div>
+            <div><strong>GameLogic:</strong> Contains game state and business logic. Validates moves and detects winner/draw.</div>
+          </div>
+          <div class="resp-row">
+            <div class="resp-dot"></div>
+            <div><strong>GameServlet:</strong> Controls the flow of the application. Handles requests and manages session.</div>
+          </div>
+          <div class="resp-row">
+            <div class="resp-dot"></div>
+            <div><strong>index.jsp:</strong> View layer. Renders the UI and sends user actions to the servlet.</div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /uml-col -->
+
+  </div><!-- /top-row -->
+
+  <!-- ── 3. MVC ARCHITECTURE ───────────── -->
+  <div class="mvc-row">
+    <div class="section-header">3. MVC ARCHITECTURE (WITHOUT DATABASE)</div>
+    <div class="mvc-body">
+
+      <!-- MODEL -->
+      <div class="mvc-col">
+        <div class="mvc-col-header model">MODEL</div>
+        <div class="mvc-file">GameLogic.java</div>
+        <ul>
+          <li>Maintains the game state (board and player).</li>
+          <li>Validates and processes moves.</li>
+          <li>Checks winner or draw condition.</li>
+          <li>Provides data to controller.</li>
+        </ul>
+      </div>
+
+      <!-- VIEW -->
+      <div class="mvc-col">
+        <div class="mvc-col-header view">VIEW</div>
+        <div class="mvc-file">index.jsp</div>
+        <ul>
+          <li>Displays the 3×3 board.</li>
+          <li>Shows current turn, messages and scores.</li>
+          <li>Sends player moves to the controller.</li>
+          <li>Provides New Game (reset) action.</li>
+        </ul>
+      </div>
+
+      <!-- CONTROLLER -->
+      <div class="mvc-col">
+        <div class="mvc-col-header ctrl">CONTROLLER</div>
+        <div class="mvc-file">GameServlet.java</div>
+        <ul>
+          <li>Receives HTTP requests (GET/POST).</li>
+          <li>Invokes GameLogic methods based on user actions.</li>
+          <li>Stores game object in HTTP Session.</li>
+          <li>Uses PRG pattern (Redirect) after POST.</li>
+        </ul>
+      </div>
+
+      <!-- MVC FLOW -->
+      <div class="mvc-col">
+        <div class="mvc-col-header flow">MVC FLOW</div>
+        <div class="mvc-flow">
+
+          <div class="flow-node user-node">User</div>
+
+          <div class="flow-arrow">
+            <span class="step-num">1.</span> Request (GET)
+            <span style="font-size:14px;color:#555;">↓</span>
+          </div>
+
+          <div class="flow-node view-node">index.jsp<br><span style="font-weight:normal;font-size:9px;">(View)</span></div>
+
+          <div class="flow-arrow">
+            <span class="step-num">2.</span> Submit Move (POST)
+            <span style="font-size:14px;color:#555;">↓</span>
+          </div>
+
+          <div class="flow-node ctrl-node">GameServlet<br><span style="font-weight:normal;font-size:9px;">(Controller)</span></div>
+
+          <div class="flow-arrow">
+            <span class="step-num">3.</span> Process
+            <span style="font-size:14px;color:#555;">↓</span>
+          </div>
+
+          <div class="flow-node model-node">GameLogic<br><span style="font-weight:normal;font-size:9px;">(Model)</span></div>
+
+          <div class="flow-arrow">
+            <span class="step-num">4.</span> Result
+            <span style="font-size:14px;color:#555;">↑</span>
+          </div>
+
+          <div style="font-size:9px;color:#444;text-align:center;line-height:1.5">
+            <span class="step-num">5.</span> Redirect (PRG) → index.jsp<br>
+            <span class="step-num">6.</span> Response (Updated UI) → User
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /mvc-body -->
+  </div><!-- /mvc-row -->
+
+</div><!-- /page -->
+
+</body>
+</html>
