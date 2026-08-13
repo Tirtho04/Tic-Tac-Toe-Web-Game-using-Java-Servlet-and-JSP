@@ -1,0 +1,15 @@
+# Build output
+target/
+build/
+*.class
+*.war
+
+# NetBeans / IDE
+nbproject/private/
+.nb-gradle/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
