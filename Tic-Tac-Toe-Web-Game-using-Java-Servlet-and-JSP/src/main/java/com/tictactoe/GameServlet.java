@@ -1,44 +1,15 @@
 package com.tictactoe;
 
+import java.io.IOException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.io.IOException;
 
-/**
- * GameServlet.java
- *
- * <p>Controller servlet for the Tic Tac Toe web game.</p>
- *
- * <p>URL mappings (defined in web.xml):</p>
- * <ul>
- * <li>{@code /play} — handles a player move (POST)</li>
- * <li>{@code /reset} — handles a new game reset (POST) — Week 6</li>
- * </ul>
- *
- * <p>Follows the Post-Redirect-Get (PRG) pattern: every POST ends with
- * response.sendRedirect("index.jsp") so a browser refresh never re-submits
- * the move.</p>
- *
- * <p><b>Week 3:</b> doGet() — redirects to index.jsp.<br>
- * <b>Week 4:</b> doPost() — reads row/col, calls makeMove(), PRG redirect.<br>
- * <b>Week 5:</b> checkWinner() and isDraw() calls added.<br>
- * <b>Week 6:</b> reset action branch added.</p>
- *
- * @author [Your Name]
- * @version 1.1
- */
 public class GameServlet extends HttpServlet {
 
-    // ----------------------------------------------------------------
-    // doGet — Week 3
-    // ----------------------------------------------------------------
-    /**
-     * Handles HTTP GET requests. Any direct browser navigation to /play is
-     * redirected to the JSP view.
-     */
     @Override
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response)
@@ -47,23 +18,6 @@ public class GameServlet extends HttpServlet {
         response.sendRedirect("index.jsp");
     }
 
-    // ----------------------------------------------------------------
-    // doPost — Week 4
-    // ----------------------------------------------------------------
-    /**
-     * Handles HTTP POST requests for player moves.
-     *
-     * Steps:
-     * 1. Get the HttpSession.
-     * 2. Read row and col parameters sent by the JSP form.
-     * 3. Get GameLogic from session — create a new one if this is the
-     *    first visit or the session was reset.
-     * 4. Call makeMove(row, col) — GameLogic itself rejects out-of-range
-     *    or already-occupied cells, so a bad/replayed request cannot
-     *    corrupt the board.
-     * 5. Save the updated GameLogic back to the session.
-     * 6. Redirect to index.jsp (PRG pattern).
-     */
     @Override
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response)

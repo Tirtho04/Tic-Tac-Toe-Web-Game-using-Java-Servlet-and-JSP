@@ -1,19 +1,5 @@
 package com.tictactoe;
 
-/**
- * GameLogic.java
- *
- * <p>Model class for the Tic Tac Toe web game. Holds the 3x3 board, the
- * current player, and the move count. Stored in the HTTP session by
- * {@link GameServlet} so state survives across requests.</p>
- *
- * <p><b>Week 3:</b> board, makeMove(), resetBoard().<br>
- * <b>Week 5:</b> checkWinner() (8 combinations) and isDraw() will be
- * completed here.</p>
- *
- * @author [Your Name]
- * @version 1.1
- */
 public class GameLogic implements java.io.Serializable {
 
     // Fields
@@ -41,7 +27,7 @@ public class GameLogic implements java.io.Serializable {
      * @param row board row, 0-2
      * @param col board column, 0-2
      * @return true if the move was applied, false if the cell was already
-     *         occupied or the coordinates were out of range
+     * occupied or the coordinates were out of range
      */
     public boolean makeMove(int row, int col) {
         if (row < 0 || row > 2 || col < 0 || col > 2) {
