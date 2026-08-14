@@ -1,0 +1,25 @@
+# Maven
+target/
+
+# Compiled class files (Maven builds these into target/, they should
+# never be committed as loose source-tree artifacts either)
+*.class
+
+# NetBeans (legacy, in case anyone regenerates project metadata locally)
+nbproject/
+build/
+nbbuild/
+nbdist/
+manifest.mf
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS
+.DS_Store
+Thumbs.db

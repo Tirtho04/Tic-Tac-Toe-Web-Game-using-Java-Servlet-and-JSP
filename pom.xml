@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.tictactoe</groupId>
+    <artifactId>TicTacToeWeb</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>Tic-Tac-Toe Web Game</name>
+    <description>
+        Java Servlet + JSP Tic-Tac-Toe web game (MVC), targeting
+        Jakarta EE 9+ on Apache Tomcat 10+.
+    </description>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Pinned to a specific, permanently-archived Tomcat 10.1.x
+             build so `mvn cargo:run` is reproducible. Bump this (and
+             re-check archive.apache.org/dist/tomcat/tomcat-10/) whenever
+             you want a newer patch release. -->
+        <tomcat.version>10.1.57</tomcat.version>
+    </properties>
+
+    <dependencies>
+        <!-- Jakarta Servlet 6.0 API (implemented by Tomcat 10.1.x).
+             provided scope: Tomcat supplies this at runtime, so it must
+             not be bundled into the WAR. -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>TicTacToeWeb</finalName>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+
+            <!-- Cargo: downloads and runs a REAL Apache Tomcat 10.1.x
+                 distribution (not an embedded-in-JVM container), and
+                 auto-deploys this WAR to it.
+                 Run with:  mvn clean package cargo:run
+                 Then open: http://localhost:8080/TicTacToeWeb/ -->
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven3-plugin</artifactId>
+                <version>1.10.10</version>
+                <configuration>
+                    <container>
+                        <containerId>tomcat10x</containerId>
+                        <type>installed</type>
+                        <zipUrlInstaller>
+                            <url>https://archive.apache.org/dist/tomcat/tomcat-10/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip</url>
+                            <downloadDir>${project.build.directory}/downloads</downloadDir>
+                            <extractDir>${project.build.directory}/extracts</extractDir>
+                        </zipUrlInstaller>
+                    </container>
+                    <configuration>
+                        <type>standalone</type>
+                        <home>${project.build.directory}/tomcat10x-home</home>
+                        <properties>
+                            <cargo.servlet.port>8080</cargo.servlet.port>
+                        </properties>
+                    </configuration>
+                    <deployables>
+                        <deployable>
+                            <groupId>com.tictactoe</groupId>
+                            <artifactId>TicTacToeWeb</artifactId>
+                            <type>war</type>
+                            <properties>
+                                <context>TicTacToeWeb</context>
+                            </properties>
+                        </deployable>
+                    </deployables>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

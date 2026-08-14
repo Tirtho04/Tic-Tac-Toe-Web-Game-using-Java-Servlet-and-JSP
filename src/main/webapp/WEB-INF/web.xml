@@ -9,6 +9,8 @@
     <description>
         Project No: 02 — Tic Tac Toe Web Game using Java Servlet and JSP.
         Week 3: GameServlet registered with /play and /reset URL mappings.
+        Week 4: index.jsp clickable board added; GameServlet.doPost()
+        implements the PRG pattern with defensive row/col validation.
     </description>
 
     <!-- ============================================================
