@@ -1,11 +1,12 @@
 package com.tictactoe;
 
+
 public class GameLogic implements java.io.Serializable {
 
-    //Fields
+    // Fields
     private char[][] board;
     private char currentPlayer;    // The player whose turn it currently is: 'X' or 'O'. X always starts
-    private int movecount; //Total number of valid moves made in this game. Used for draw detection.
+    private int movecount;         // Total number of valid moves made in this game. Used for draw detection.
     private char winner;
 
     public GameLogic() {
@@ -21,13 +22,18 @@ public class GameLogic implements java.io.Serializable {
         }
     }
 
+ 
     public boolean makeMove(int row, int col) {
+        if (row < 0 || row > 2 || col < 0 || col > 2) {
+            return false;
+        }
         if (board[row][col] != ' ') {
             return false;
         }
         board[row][col] = currentPlayer;
         movecount++;
-        currentPlayer = (currentPlayer == 'X') ? '0' : 'X';
+
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
         return true;
     }
 
@@ -42,9 +48,9 @@ public class GameLogic implements java.io.Serializable {
         winner = ' ';
     }
 
-    //win& draw detection placeholder satubs(fully implemented week 5)
+  
     public char winner() {
-        // Week 5: implement all 8 winning combinations
+   
         return winner;
     }
 
@@ -68,7 +74,7 @@ public class GameLogic implements java.io.Serializable {
         return winner;
     }
 
-    // Quick test — remove before Week 5
+
     public static void main(String[] args) {
         GameLogic game = new GameLogic();
 
