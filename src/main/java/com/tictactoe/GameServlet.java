@@ -52,8 +52,8 @@ public class GameServlet extends HttpServlet {
     /**
      * Parses a request parameter expected to be a single board coordinate
      * (0-2). Returns null instead of throwing for any missing, blank, or
-     * non-numeric input -- range checking (0-2) is left to
-     * GameLogic.makeMove, which already validates bounds.
+     * non-numeric input -- range checking (0-2) is left to GameLogic.makeMove,
+     * which already validates bounds.
      */
     private Integer parseCoordinate(String raw) {
         if (raw == null || raw.trim().isEmpty()) {
