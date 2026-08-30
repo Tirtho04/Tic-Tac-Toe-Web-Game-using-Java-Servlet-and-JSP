@@ -83,6 +83,15 @@
             vertical-align: middle;
             font-size: 36px;
             font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+        table.board td.cell-win {
+            background-color: #dcfce7;
+            animation: pulse-win 1.2s infinite alternate;
+        }
+        @keyframes pulse-win {
+            from { background-color: #dcfce7; }
+            to { background-color: #bbf7d0; }
         }
         .mark-x {
             color: #2563eb;
@@ -115,6 +124,28 @@
             align-items: center;
             justify-content: center;
         }
+        .controls {
+            margin-top: 24px;
+        }
+        .btn-reset {
+            background-color: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 10px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+        }
+        .btn-reset:hover {
+            background-color: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+        }
+        .btn-reset:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
@@ -136,8 +167,9 @@
         <tr>
             <% for (int col = 0; col < 3; col++) {
                    char mark = board[row][col];
+                   boolean isWinCell = game.isWinningCell(row, col);
             %>
-            <td>
+            <td class="<%= isWinCell ? "cell-win" : "" %>">
                 <% if (mark == 'X') { %>
                     <span class="mark-x">X</span>
                 <% } else if (mark == 'O') { %>
@@ -156,6 +188,13 @@
         </tr>
         <% } %>
     </table>
+
+    <div class="controls">
+        <form method="post" action="play">
+            <input type="hidden" name="action" value="reset">
+            <button type="submit" class="btn-reset">🔄 New Game</button>
+        </form>
+    </div>
 
 </body>
 </html>
