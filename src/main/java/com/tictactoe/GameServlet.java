@@ -15,7 +15,9 @@ public class GameServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        if ("reset".equalsIgnoreCase(action)) {
+        if ("resetScores".equalsIgnoreCase(action)) {
+            handleResetScores(request);
+        } else if ("reset".equalsIgnoreCase(action)) {
             handleReset(request);
         }
         response.sendRedirect("index.jsp");
@@ -35,7 +37,10 @@ public class GameServlet extends HttpServlet {
         }
 
         String action = request.getParameter("action");
-        if ("reset".equalsIgnoreCase(action)) {
+        if ("resetScores".equalsIgnoreCase(action)) {
+            game.resetScores();
+            session.setAttribute("game", game);
+        } else if ("reset".equalsIgnoreCase(action)) {
             game.resetBoard();
             session.setAttribute("game", game);
         } else {
@@ -65,6 +70,17 @@ public class GameServlet extends HttpServlet {
             GameLogic game = (GameLogic) session.getAttribute("game");
             if (game != null) {
                 game.resetBoard();
+                session.setAttribute("game", game);
+            }
+        }
+    }
+
+    private void handleResetScores(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            GameLogic game = (GameLogic) session.getAttribute("game");
+            if (game != null) {
+                game.resetScores();
                 session.setAttribute("game", game);
             }
         }

@@ -2,12 +2,18 @@ package com.tictactoe;
 
 public class GameLogic implements java.io.Serializable {
 
-    // Fields
+    // Board state fields
     private char[][] board;
     private char currentPlayer;    // The player whose turn it currently is: 'X' or 'O'. X always starts
     private int movecount;         // Total number of valid moves made in this game. Used for draw detection.
     private char winner;           // 'X', 'O', or ' ' (no winner yet)
     private int[][] winningCells;  // Stores 3 coordinates [row, col] of the winning line, or null
+
+    // Match score tracker fields (persists across rounds in session)
+    private int xWins;
+    private int oWins;
+    private int draws;
+    private boolean scoreUpdated;  // Prevents multiple increments in the same round
 
     public GameLogic() {
         board = new char[3][3];
@@ -15,6 +21,11 @@ public class GameLogic implements java.io.Serializable {
         movecount = 0;
         winner = ' ';
         winningCells = null;
+        xWins = 0;
+        oWins = 0;
+        draws = 0;
+        scoreUpdated = false;
+
         // Fill every cell with a space character (empty)
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -23,10 +34,6 @@ public class GameLogic implements java.io.Serializable {
         }
     }
 
-    /**
-     * Executes a move on the board for the current player.
-     * Checks for a win or draw condition immediately.
-     */
     public boolean makeMove(int row, int col) {
         if (isGameOver()) {
             return false;
@@ -44,18 +51,26 @@ public class GameLogic implements java.io.Serializable {
         char win = checkWinner();
         if (win != ' ') {
             winner = win;
-        } else if (movecount < 9) {
+            if (!scoreUpdated) {
+                if (win == 'X') {
+                    xWins++;
+                } else if (win == 'O') {
+                    oWins++;
+                }
+                scoreUpdated = true;
+            }
+        } else if (movecount == 9) {
+            if (!scoreUpdated) {
+                draws++;
+                scoreUpdated = true;
+            }
+        } else {
             currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
         }
 
         return true;
     }
 
-    /**
-     * Checks all 8 possible winning lines (3 horizontal, 3 vertical, 2 diagonal).
-     * Populates winningCells with the 3 coordinates if a win occurs.
-     * @return 'X' or 'O' if a player has won, or ' ' if no winner yet.
-     */
     public char checkWinner() {
         // 1. Check Rows
         for (int r = 0; r < 3; r++) {
@@ -99,6 +114,14 @@ public class GameLogic implements java.io.Serializable {
         movecount = 0;
         winner = ' ';
         winningCells = null;
+        scoreUpdated = false;
+    }
+
+    public void resetScores() {
+        xWins = 0;
+        oWins = 0;
+        draws = 0;
+        scoreUpdated = false;
     }
 
     public boolean isWinningCell(int row, int col) {
@@ -141,30 +164,43 @@ public class GameLogic implements java.io.Serializable {
         return winner;
     }
 
-    public char winner() {
-        return winner;
+    public int getXWins() {
+        return xWins;
     }
 
-    public char getwinner() {
-        return winner;
+    public int getOWins() {
+        return oWins;
+    }
+
+    public int getDraws() {
+        return draws;
     }
 
     public static void main(String[] args) {
-        System.out.println("=== Running Week 6 Tests ===");
+        System.out.println("=== Running Week 7 Tests ===");
 
-        // Test 1: Horizontal Row Win (Row 0) + Winning Cell Check
-        GameLogic g1 = new GameLogic();
-        g1.makeMove(0, 0); // X
-        g1.makeMove(1, 0); // O
-        g1.makeMove(0, 1); // X
-        g1.makeMove(1, 1); // O
-        g1.makeMove(0, 2); // X (Row 0 complete)
-        System.out.println("Test 1 (Row Win): Winner=" + g1.getWinner() + " [Expected: X]");
-        System.out.println("Test 1 (isWinningCell(0,0)): " + g1.isWinningCell(0, 0) + " [Expected: true]");
-        System.out.println("Test 1 (isWinningCell(1,0)): " + g1.isWinningCell(1, 0) + " [Expected: false]");
+        GameLogic game = new GameLogic();
 
-        // Test 2: Reset behavior
-        g1.resetBoard();
-        System.out.println("Test 2 (After Reset): Winner='" + g1.getWinner() + "', WinningCells=" + (g1.getWinningCells() == null) + " [Expected: true], CurrentPlayer=" + g1.getCurrentPlayer() + " [Expected: X]");
+        // Round 1: X wins
+        game.makeMove(0, 0); // X
+        game.makeMove(1, 0); // O
+        game.makeMove(0, 1); // X
+        game.makeMove(1, 1); // O
+        game.makeMove(0, 2); // X
+        System.out.println("Round 1 (X Win) -> X: " + game.getXWins() + " [Expected: 1], O: " + game.getOWins() + " [Expected: 0], Draws: " + game.getDraws() + " [Expected: 0]");
+
+        // Round 2: New Round (preserve score)
+        game.resetBoard();
+        game.makeMove(0, 0); // X
+        game.makeMove(0, 1); // O
+        game.makeMove(2, 2); // X
+        game.makeMove(1, 1); // O
+        game.makeMove(2, 0); // X
+        game.makeMove(2, 1); // O (Col 1 complete)
+        System.out.println("Round 2 (O Win) -> X: " + game.getXWins() + " [Expected: 1], O: " + game.getOWins() + " [Expected: 1], Draws: " + game.getDraws() + " [Expected: 0]");
+
+        // Round 3: Reset Scores
+        game.resetScores();
+        System.out.println("After Reset Scores -> X: " + game.getXWins() + " [Expected: 0], O: " + game.getOWins() + " [Expected: 0], Draws: " + game.getDraws() + " [Expected: 0]");
     }
 }
