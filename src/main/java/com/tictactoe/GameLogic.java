@@ -1,20 +1,53 @@
 package com.tictactoe;
 
-public class GameLogic implements java.io.Serializable {
+import java.io.Serializable;
 
-    // Board state fields
+/**
+ * Model component representing the core state and rules of a Tic-Tac-Toe game.
+ * <p>
+ * Manages the 3&times;3 board grid, validates move coordinates, tracks player turns ('X' and 'O'),
+ * detects 8-line win conditions and draws, identifies winning cell coordinates for UI highlighting,
+ * and maintains session-persistent match scores across multiple rounds.
+ * </p>
+ *
+ * @author Tirtho04
+ * @version 1.0
+ */
+public class GameLogic implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    /** 3x3 character grid representing the game board (' ', 'X', or 'O'). */
     private char[][] board;
-    private char currentPlayer;    // The player whose turn it currently is: 'X' or 'O'. X always starts
-    private int movecount;         // Total number of valid moves made in this game. Used for draw detection.
-    private char winner;           // 'X', 'O', or ' ' (no winner yet)
-    private int[][] winningCells;  // Stores 3 coordinates [row, col] of the winning line, or null
 
-    // Match score tracker fields (persists across rounds in session)
+    /** The player whose turn it currently is: 'X' (starts first) or 'O'. */
+    private char currentPlayer;
+
+    /** Total number of valid moves made in the current round (0 to 9). */
+    private int movecount;
+
+    /** Current winner of the round: 'X', 'O', or ' ' (no winner yet / draw). */
+    private char winner;
+
+    /** Stores the [row, col] coordinates of the 3 winning cells, or null if no winner. */
+    private int[][] winningCells;
+
+    /** Cumulative number of rounds won by Player X in this session. */
     private int xWins;
-    private int oWins;
-    private int draws;
-    private boolean scoreUpdated;  // Prevents multiple increments in the same round
 
+    /** Cumulative number of rounds won by Player O in this session. */
+    private int oWins;
+
+    /** Cumulative number of tied rounds in this session. */
+    private int draws;
+
+    /** Flag preventing duplicate score increments within the same finished round. */
+    private boolean scoreUpdated;
+
+    /**
+     * Constructs a new {@code GameLogic} instance initialized with an empty 3&times;3 board,
+     * player 'X' starting first, zero move count, and match score counters set to 0.
+     */
     public GameLogic() {
         board = new char[3][3];
         currentPlayer = 'X';
@@ -26,7 +59,6 @@ public class GameLogic implements java.io.Serializable {
         draws = 0;
         scoreUpdated = false;
 
-        // Fill every cell with a space character (empty)
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 board[row][col] = ' ';
@@ -34,6 +66,18 @@ public class GameLogic implements java.io.Serializable {
         }
     }
 
+    /**
+     * Attempts to place the current player's mark at the specified grid cell.
+     * <p>
+     * If the move is valid (cell within bounds [0..2], cell empty, and game not over),
+     * the cell is marked, move count is incremented, win/draw status is evaluated,
+     * match scores are updated if the round concludes, and the turn is toggled.
+     * </p>
+     *
+     * @param row row index (0 to 2)
+     * @param col column index (0 to 2)
+     * @return {@code true} if the move was valid and applied; {@code false} otherwise
+     */
     public boolean makeMove(int row, int col) {
         if (isGameOver()) {
             return false;
@@ -71,6 +115,15 @@ public class GameLogic implements java.io.Serializable {
         return true;
     }
 
+    /**
+     * Evaluates the board across all 8 possible winning combinations (3 rows, 3 columns, 2 diagonals).
+     * <p>
+     * When a winning line is found, stores the 3 winning cell coordinates into {@code winningCells}
+     * and returns the winning mark ('X' or 'O'). If no win exists, returns ' '.
+     * </p>
+     *
+     * @return 'X' if Player X won, 'O' if Player O won, or ' ' if no winner
+     */
     public char checkWinner() {
         // 1. Check Rows
         for (int r = 0; r < 3; r++) {
@@ -104,6 +157,11 @@ public class GameLogic implements java.io.Serializable {
         return ' ';
     }
 
+    /**
+     * Resets the board for a new round while preserving the cumulative match scores.
+     * Clears all 9 cells to ' ', resets turn to 'X', zeroes the move count,
+     * clears winner and winning cells, and resets the round score update guard.
+     */
     public void resetBoard() {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -117,6 +175,9 @@ public class GameLogic implements java.io.Serializable {
         scoreUpdated = false;
     }
 
+    /**
+     * Resets all cumulative match statistics (Player X wins, Player O wins, Ties) back to 0.
+     */
     public void resetScores() {
         xWins = 0;
         oWins = 0;
@@ -124,6 +185,13 @@ public class GameLogic implements java.io.Serializable {
         scoreUpdated = false;
     }
 
+    /**
+     * Checks if a given cell at (row, col) is part of the winning 3-in-a-row line.
+     *
+     * @param row the row index (0 to 2)
+     * @param col the column index (0 to 2)
+     * @return {@code true} if the cell is in the winning line; {@code false} otherwise
+     */
     public boolean isWinningCell(int row, int col) {
         if (winningCells == null) {
             return false;
@@ -136,71 +204,93 @@ public class GameLogic implements java.io.Serializable {
         return false;
     }
 
+    /**
+     * Returns the coordinates of the winning line cells.
+     *
+     * @return 2D array of [row, col] coordinates, or {@code null} if no winner
+     */
     public int[][] getWinningCells() {
         return winningCells;
     }
 
+    /**
+     * Determines if the current round has concluded in a draw.
+     *
+     * @return {@code true} if 9 valid moves were made and no player won; {@code false} otherwise
+     */
     public boolean isDraw() {
         return (movecount == 9 && winner == ' ');
     }
 
+    /**
+     * Determines if the current round is over (either won or drawn).
+     *
+     * @return {@code true} if a player has won or if all 9 cells are filled
+     */
     public boolean isGameOver() {
         return (winner != ' ' || isDraw());
     }
 
+    /**
+     * Returns the 3&times;3 board grid state.
+     *
+     * @return 2D char array representing the board
+     */
     public char[][] getBoard() {
         return board;
     }
 
+    /**
+     * Returns the mark of the player whose turn it currently is.
+     *
+     * @return 'X' or 'O'
+     */
     public char getCurrentPlayer() {
         return currentPlayer;
     }
 
+    /**
+     * Returns the total number of moves made in the current round.
+     *
+     * @return move count between 0 and 9
+     */
     public int getMoveCount() {
         return movecount;
     }
 
+    /**
+     * Returns the winner of the current round.
+     *
+     * @return 'X', 'O', or ' ' if game is ongoing or tied
+     */
     public char getWinner() {
         return winner;
     }
 
+    /**
+     * Returns the cumulative total of rounds won by Player X in this session.
+     *
+     * @return Player X win count
+     */
     public int getXWins() {
         return xWins;
     }
 
+    /**
+     * Returns the cumulative total of rounds won by Player O in this session.
+     *
+     * @return Player O win count
+     */
     public int getOWins() {
         return oWins;
     }
 
+    /**
+     * Returns the cumulative total of tied rounds in this session.
+     *
+     * @return tie count
+     */
     public int getDraws() {
         return draws;
-    }
-
-    public static void main(String[] args) {
-        System.out.println("=== Running Week 7 Tests ===");
-
-        GameLogic game = new GameLogic();
-
-        // Round 1: X wins
-        game.makeMove(0, 0); // X
-        game.makeMove(1, 0); // O
-        game.makeMove(0, 1); // X
-        game.makeMove(1, 1); // O
-        game.makeMove(0, 2); // X
-        System.out.println("Round 1 (X Win) -> X: " + game.getXWins() + " [Expected: 1], O: " + game.getOWins() + " [Expected: 0], Draws: " + game.getDraws() + " [Expected: 0]");
-
-        // Round 2: New Round (preserve score)
-        game.resetBoard();
-        game.makeMove(0, 0); // X
-        game.makeMove(0, 1); // O
-        game.makeMove(2, 2); // X
-        game.makeMove(1, 1); // O
-        game.makeMove(2, 0); // X
-        game.makeMove(2, 1); // O (Col 1 complete)
-        System.out.println("Round 2 (O Win) -> X: " + game.getXWins() + " [Expected: 1], O: " + game.getOWins() + " [Expected: 1], Draws: " + game.getDraws() + " [Expected: 0]");
-
-        // Round 3: Reset Scores
-        game.resetScores();
-        System.out.println("After Reset Scores -> X: " + game.getXWins() + " [Expected: 0], O: " + game.getOWins() + " [Expected: 0], Draws: " + game.getDraws() + " [Expected: 0]");
     }
 }

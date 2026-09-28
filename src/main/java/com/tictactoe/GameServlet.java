@@ -7,8 +7,30 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * Controller component in the MVC architecture that handles player interactions and actions.
+ * <p>
+ * Mapped to the {@code /play} endpoint. Manages game sessions, processes move submissions,
+ * handles "New Round" (board reset) and "Reset Scores" commands, and implements the
+ * Post-Redirect-Get (PRG) pattern by redirecting to {@code index.jsp} after every request.
+ * </p>
+ *
+ * @author Tirtho04
+ * @version 1.0
+ * @see GameLogic
+ */
 public class GameServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Handles HTTP GET requests for direct action triggers (e.g. reset actions via links).
+     *
+     * @param request  the {@link HttpServletRequest} containing query parameters
+     * @param response the {@link HttpServletResponse} for issuing redirects
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException      if an I/O error occurs during redirection
+     */
     @Override
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response)
@@ -23,6 +45,19 @@ public class GameServlet extends HttpServlet {
         response.sendRedirect("index.jsp");
     }
 
+    /**
+     * Handles HTTP POST requests containing player moves or action commands.
+     * <p>
+     * Retrieves or initializes the {@link GameLogic} model in the {@link HttpSession}.
+     * Executes {@code resetScores}, {@code reset}, or processes cell coordinate inputs
+     * ({@code row} and {@code col}), then redirects back to {@code index.jsp} (PRG pattern).
+     * </p>
+     *
+     * @param request  the {@link HttpServletRequest} containing move or action data
+     * @param response the {@link HttpServletResponse} for issuing redirects
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException      if an I/O error occurs during redirection
+     */
     @Override
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response)
@@ -64,6 +99,11 @@ public class GameServlet extends HttpServlet {
         response.sendRedirect("index.jsp");
     }
 
+    /**
+     * Resets the board state for a new round in the user's active session.
+     *
+     * @param request the current HTTP request
+     */
     private void handleReset(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -75,6 +115,11 @@ public class GameServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Resets cumulative match scores to zero in the user's active session.
+     *
+     * @param request the current HTTP request
+     */
     private void handleResetScores(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
