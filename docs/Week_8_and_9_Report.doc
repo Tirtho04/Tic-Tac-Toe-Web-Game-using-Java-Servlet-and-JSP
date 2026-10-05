@@ -1,0 +1,324 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+    <meta charset="utf-8">
+    <title>Week 8 and 9 Implementation Report - Tic Tac Toe Web Game</title>
+    <!--[if gte mso 9]>
+    <xml>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>100</w:Zoom>
+            <w:DoNotOptimizeForBrowser/>
+        </w:WordDocument>
+    </xml>
+    <![endif]-->
+    <style>
+        body {
+            font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #1e293b;
+            margin: 36pt 48pt;
+        }
+        h1 {
+            font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+            font-size: 22pt;
+            color: #1e3a8a;
+            border-bottom: 2.5pt solid #2563eb;
+            padding-bottom: 6pt;
+            margin-bottom: 14pt;
+        }
+        h2 {
+            font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+            font-size: 15pt;
+            color: #1e40af;
+            border-bottom: 1pt solid #cbd5e1;
+            padding-bottom: 3pt;
+            margin-top: 20pt;
+            margin-bottom: 8pt;
+        }
+        h3 {
+            font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+            font-size: 12pt;
+            color: #0f172a;
+            margin-top: 14pt;
+            margin-bottom: 6pt;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 12pt 0;
+            font-size: 10pt;
+        }
+        th, td {
+            border: 1pt solid #cbd5e1;
+            padding: 6pt 10pt;
+            text-align: left;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        .badge-pass {
+            background-color: #dcfce7;
+            color: #166534;
+            font-weight: bold;
+            padding: 2pt 6pt;
+            border-radius: 4pt;
+        }
+        .callout {
+            background-color: #eff6ff;
+            border-left: 4pt solid #3b82f6;
+            padding: 8pt 12pt;
+            margin: 12pt 0;
+            border-radius: 0 4pt 4pt 0;
+        }
+        .callout-title {
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 3pt;
+        }
+        code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background-color: #f1f5f9;
+            padding: 1.5pt 3.5pt;
+            border-radius: 3pt;
+            font-size: 9.5pt;
+            color: #0f172a;
+        }
+        pre {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 10pt 12pt;
+            border-radius: 6pt;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 9.5pt;
+            overflow-x: auto;
+            line-height: 1.4;
+        }
+        .qa-box {
+            background-color: #f8fafc;
+            border: 1pt solid #e2e8f0;
+            border-radius: 6pt;
+            padding: 10pt 14pt;
+            margin: 10pt 0;
+        }
+        .qa-q {
+            font-weight: bold;
+            color: #1e3a8a;
+            font-size: 11pt;
+            margin-bottom: 4pt;
+        }
+        .qa-a {
+            color: #334155;
+            font-size: 10.5pt;
+        }
+        .meta-table td {
+            border: none;
+            padding: 3pt 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tic-Tac-Toe Web Game — Week 8 & Week 9 Detailed Report</h1>
+
+    <table class="meta-table" style="margin-bottom: 16pt;">
+        <tr>
+            <td style="width: 140pt;"><strong>Project:</strong></td>
+            <td>Tic-Tac-Toe Web Game using Java Servlet & JSP</td>
+        </tr>
+        <tr>
+            <td><strong>Author:</strong></td>
+            <td>Tirtho04</td>
+        </tr>
+        <tr>
+            <td><strong>Architecture:</strong></td>
+            <td>Model-View-Controller (MVC) + Post-Redirect-Get (PRG)</td>
+        </tr>
+        <tr>
+            <td><strong>Tech Stack:</strong></td>
+            <td>Java 17, Jakarta Servlet 6.0, JSP, Tomcat 10.1, JUnit 5, Maven</td>
+        </tr>
+        <tr>
+            <td><strong>Release Tag:</strong></td>
+            <td><code>v1.0-tested</code></td>
+        </tr>
+        <tr>
+            <td><strong>Repository:</strong></td>
+            <td>https://github.com/Tirtho04/Tic-Tac-Toe-Web-Game-using-Java-Servlet-and-JSP</td>
+        </tr>
+    </table>
+
+    <hr style="border: 0; border-top: 1pt solid #cbd5e1; margin-bottom: 16pt;" />
+
+    <!-- ==================== WEEK 8 ==================== -->
+    <h2>📅 WEEK 8: Testing & Quality Assurance Phase</h2>
+    
+    <div class="callout">
+        <div class="callout-title">Official Weekly Goal:</div>
+        <em>"Write TEST_CASES.md, run all 8 test cases, fix bugs (one commit per fix), tag v1.0-tested"</em>
+    </div>
+
+    <h3>1. Test Documentation (<code>docs/TEST_CASES.md</code> & <code>TEST_CASES.md</code>)</h3>
+    <p>
+        Documented 8 formal, comprehensive test cases with step-by-step inputs, preconditions, expected outputs, and execution results covering state transitions, out-of-bounds protection, all 8 win configurations, draw detection, and session score persistence.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 60pt;">Test ID</th>
+                <th style="width: 130pt;">Test Case Name</th>
+                <th>Target Behavior & Validation Scope</th>
+                <th style="width: 55pt;">Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>TC-01</strong></td>
+                <td><strong>Valid Move & Turn Alternation</strong></td>
+                <td>Verifies that placing a mark on an empty cell updates grid state, toggles player turn (<code>X ➔ O ➔ X</code>), and increments move count.</td>
+                <td><span class="badge-pass">PASS</span></td>
+            </tr>
+            <tr>
+                <td><strong>TC-02</strong></td>
+                <td><strong>Invalid Move Rejection</strong></td>
+                <td>Verifies that clicks on occupied cells or out-of-bounds coordinates (<code>-1, 0</code>, <code>0, 3</code>, <code>3, 3</code>) return <code>false</code> without altering board state.</td>
+                <td><span class="badge-pass">PASS</span></td>
+            </tr>
+            <tr>
+                <td><strong>TC-03</strong></td>
+                <td><strong>Row Win Detection</strong></td>
+                <td>Validates horizontal 3-in-a-row detection across Rows 0, 1, and 2, and verifies <code>isWinningCell()</code> returns <code>true</code> for all 3 winning cell coordinates.</td>
+                <td><span class="badge-pass">PASS</span></td>
+            </tr>
+            <tr>
+                <td><strong>TC-04</strong></td>
+                <td><strong>Column Win Detection</strong></td>
+                <td>Validates vertical 3-in-a-column detection across Columns 0, 1, and 2, and verifies <code>winningCells</code> array coordinate extraction.</td>
+                <td><span class="badge-pass">PASS</span></td>
+            </tr>
+            <tr>
+                <td><strong>TC-05</strong></td>
+                <td><strong>Diagonal Win Detection</strong></td>
+                <td>Validates Main Diagonal <code>[(0,0), (1,1), (2,2)]</code> and Anti-Diagonal <code>[(0,2), (1,1), (2,0)]</code> win paths.</td>
+                <td><span class="badge-pass">PASS</span></td>
+            </tr>
+            <tr>
+                <td><strong>TC-06</strong></td>
+                <td><strong>Draw Detection (Cat's Game)</strong></td>
+                <td>Validates that when all 9 cells are filled with no 3-in-a-row winner, <code>isDraw()</code> returns <code>true</code> and the tie counter increments.</td>
+                <td><span class="badge-pass">PASS</span></td>
+            </tr>
+            <tr>
+                <td><strong>TC-07</strong></td>
+                <td><strong>Board Reset vs Score</strong></td>
+                <td>Verifies that <code>resetBoard()</code> clears the grid for a New Round and resets turn to 'X', while <strong>preserving cumulative scores</strong> in the session.</td>
+                <td><span class="badge-pass">PASS</span></td>
+            </tr>
+            <tr>
+                <td><strong>TC-08</strong></td>
+                <td><strong>Score Tracker & Reset Scores</strong></td>
+                <td>Validates score tracking across multiple rounds and verifies that <code>resetScores()</code> resets <code>xWins</code>, <code>oWins</code>, and <code>draws</code> back to 0.</td>
+                <td><span class="badge-pass">PASS</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>2. JUnit 5 Automated Test Suite (<code>src/test/java/com/tictactoe/GameLogicTest.java</code>)</h3>
+    <p>
+        Configured <code>junit-jupiter:5.10.2</code> in <code>pom.xml</code> and implemented automated tests for all 8 test cases. All tests are automatically run during the Maven test lifecycle.
+    </p>
+    <pre>
+mvn test
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running com.tictactoe.GameLogicTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.054 s
+BUILD SUCCESS</pre>
+
+    <h3>3. Git Release Tag: <code>v1.0-tested</code></h3>
+    <p>
+        Tagged the verified milestone commit in Git and pushed to remote GitHub repository:
+        <br />
+        <code>git tag -a v1.0-tested -m "Version 1.0 Tested: 8 test cases verified with 100% pass rate"</code>
+        <br />
+        <code>git push origin main --tags</code>
+    </p>
+
+    <!-- ==================== WEEK 9 ==================== -->
+    <h2>📅 WEEK 9: Submission Preparation & Documentation Phase</h2>
+    
+    <div class="callout">
+        <div class="callout-title">Official Weekly Goal:</div>
+        <em>"Add Javadoc to all classes, write REPORT.md, take screenshots, finalise README"</em>
+    </div>
+
+    <h3>1. Comprehensive Javadoc Documentation</h3>
+    <p>Added professional standard Javadoc comments to all classes, methods, parameters, and fields:</p>
+    <ul>
+        <li><strong><code>GameLogic.java</code>:</strong> Class-level architectural doc, field descriptions, and full method documentation (<code>makeMove</code>, <code>checkWinner</code>, <code>resetBoard</code>, <code>resetScores</code>, <code>isWinningCell</code>, <code>isDraw</code>, <code>isGameOver</code>, and score getters) with <code>@param</code>, <code>@return</code>, and <code>@author</code> tags.</li>
+        <li><strong><code>GameServlet.java</code>:</strong> Documented HTTP GET/POST lifecycles, <code>HttpSession</code> state management, the <strong>Post-Redirect-Get (PRG)</strong> pattern, and defensive coordinate parsing (<code>parseCoordinate</code>).</li>
+    </ul>
+
+    <h3>2. Technical Project Report (<code>docs/REPORT.md</code> & <code>REPORT.md</code>)</h3>
+    <p>A comprehensive 7-section technical report detailing:</p>
+    <ol>
+        <li><strong>Executive Summary:</strong> Stack overview and project goals.</li>
+        <li><strong>Architecture & Design System:</strong> MVC request-response flow diagrams, PRG pattern rationale, and session serialization strategy.</li>
+        <li><strong>Core Algorithms:</strong> 8-line win detection mathematics, draw evaluation, and score persistence algorithms.</li>
+        <li><strong>UI & Dark Theme System:</strong> CSS design tokens, keyframe animations (<code>@keyframes markPop</code>, <code>@keyframes pulseRing</code>), and accessibility (a11y) standards.</li>
+        <li><strong>Testing & QA Matrix:</strong> Complete 8-test verification summary with 100% pass rate.</li>
+        <li><strong>Challenges Encountered & Solutions:</strong> Form re-submission prevention, input validation, and embedded Tomcat container configuration.</li>
+        <li><strong>Future Roadmap:</strong> Minimax AI single-player mode, WebSockets multiplayer, and JPA persistence.</li>
+    </ol>
+
+    <h3>3. Finalized Repository <code>README.md</code></h3>
+    <p>Overhauled the GitHub project homepage with:</p>
+    <ul>
+        <li>Status and technology badges (Java 17, Jakarta EE 10, Tomcat 10.1, JUnit 5, Maven, Release <code>v1.0-tested</code>).</li>
+        <li>ASCII visual game layout preview.</li>
+        <li>MVC architecture flowchart and request-response lifecycle.</li>
+        <li>Quick-start instructions for building, automated testing (<code>mvn test</code>), and running (<code>mvn package cargo:run</code>).</li>
+        <li>Directory structure tree and 10-Week Implementation Schedule progress table.</li>
+    </ul>
+
+    <!-- ==================== Q&A SECTION ==================== -->
+    <h2>🎓 Teacher / Viva Presentation Q&A Cheat Sheet</h2>
+
+    <div class="qa-box">
+        <div class="qa-q">Q1: How did you test your Tic-Tac-Toe application?</div>
+        <div class="qa-a">
+            <strong>Answer:</strong> We implemented an automated unit testing suite using <strong>JUnit 5</strong> in <code>GameLogicTest.java</code>. We wrote 8 automated test cases covering valid move execution, out-of-bounds / occupied cell rejection, all 8 winning lines (3 rows, 3 columns, 2 diagonals), 9-move draw condition, multi-round score accumulation, and score resetting. Running <code>mvn test</code> executes all 8 tests with a 100% pass rate.
+        </div>
+    </div>
+
+    <div class="qa-box">
+        <div class="qa-q">Q2: What is the purpose of the <code>v1.0-tested</code> Git tag in Week 8?</div>
+        <div class="qa-a">
+            <strong>Answer:</strong> Git tags create permanent milestone bookmarks in the repository's history. The <code>v1.0-tested</code> tag marks the exact commit where all core game logic and automated test suites passed 100% verification before moving to submission documentation.
+        </div>
+    </div>
+
+    <div class="qa-box">
+        <div class="qa-q">Q3: How do match scores persist across multiple rounds without a database?</div>
+        <div class="qa-a">
+            <strong>Answer:</strong> The <code>GameLogic</code> object is stored inside the user's <code>HttpSession</code>. When a round ends and the player clicks "New Round", the servlet calls <code>game.resetBoard()</code>, which clears the 3&times;3 matrix and resets turns, but preserves <code>xWins</code>, <code>oWins</code>, and <code>draws</code> throughout the browser session.
+        </div>
+    </div>
+
+    <div class="qa-box">
+        <div class="qa-q">Q4: What is the Post-Redirect-Get (PRG) pattern and why is it used?</div>
+        <div class="qa-a">
+            <strong>Answer:</strong> When a user clicks a cell, the browser sends an HTTP POST to <code>GameServlet</code>. After updating the game state, instead of forwarding directly to the JSP, the servlet issues an HTTP 302 redirect (<code>response.sendRedirect("index.jsp")</code>). This forces the browser to load <code>index.jsp</code> via HTTP GET, preventing accidental duplicate moves or browser warning prompts when the page is refreshed.
+        </div>
+    </div>
+
+</body>
+</html>

@@ -45,11 +45,6 @@
             padding: 28px 22px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
             text-align: center;
-            animation: fadeIn 0.4s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
         }
         .title {
             font-size: 28px;
@@ -429,6 +424,43 @@
         </form>
     </nav>
 </main>
+
+<script>
+    // Asynchronous move and action submission to prevent page reload blinking
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.querySelector('.container');
+        if (!container) return;
+
+        container.addEventListener('submit', async (e) => {
+            const form = e.target.closest('form');
+            if (!form) return;
+
+            e.preventDefault();
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(form.action || 'play', {
+                    method: 'POST',
+                    body: new URLSearchParams(formData)
+                });
+
+                if (response.ok) {
+                    const htmlText = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(htmlText, 'text/html');
+                    const newContainer = doc.querySelector('.container');
+                    if (newContainer) {
+                        container.innerHTML = newContainer.innerHTML;
+                    }
+                } else {
+                    form.submit();
+                }
+            } catch (err) {
+                form.submit();
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

@@ -182,7 +182,7 @@ public class GameLogicTest {
         assertNull(game.getWinningCells(), "Winning cells must be null");
         assertFalse(game.isGameOver(), "Game must not be over");
 
-        // CRUCIAL: Match scores must be preserved across rounds!
+        // Verify match scores are preserved across rounds
         assertEquals(1, game.getXWins(), "Player X wins must remain 1 after resetBoard()");
         assertEquals(0, game.getOWins(), "Player O wins must remain 0");
         assertEquals(0, game.getDraws(), "Draws must remain 0");

@@ -79,11 +79,6 @@ public class GameServlet extends HttpServlet {
             game.resetBoard();
             session.setAttribute("game", game);
         } else {
-            // Defensive parsing: "row"/"col" params may be missing, empty, or
-            // malformed (e.g. a hand-crafted POST, or a stale/replayed form).
-            // Never let a bad param blow up as an uncaught exception -- just
-            // skip applying the move and fall through to the PRG redirect so
-            // the board still renders with whatever state it already had.
             Integer row = parseCoordinate(request.getParameter("row"));
             Integer col = parseCoordinate(request.getParameter("col"));
 
@@ -93,9 +88,7 @@ public class GameServlet extends HttpServlet {
             }
         }
 
-        // Post-Redirect-Get: always redirect after a POST so a browser
-        // refresh re-issues a GET against index.jsp instead of replaying
-        // the move.
+        // Post-Redirect-Get (PRG) pattern
         response.sendRedirect("index.jsp");
     }
 
@@ -132,10 +125,10 @@ public class GameServlet extends HttpServlet {
     }
 
     /**
-     * Parses a request parameter expected to be a single board coordinate
-     * (0-2). Returns null instead of throwing for any missing, blank, or
-     * non-numeric input -- range checking (0-2) is left to GameLogic.makeMove,
-     * which already validates bounds.
+     * Parses a coordinate parameter string into an Integer, returning null if invalid or missing.
+     *
+     * @param raw the raw coordinate string from request
+     * @return parsed Integer coordinate, or null if unparseable
      */
     private Integer parseCoordinate(String raw) {
         if (raw == null || raw.trim().isEmpty()) {

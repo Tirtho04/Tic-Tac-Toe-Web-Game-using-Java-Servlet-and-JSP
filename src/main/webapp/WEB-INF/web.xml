@@ -6,31 +6,15 @@
          version="5.0">
 
     <display-name>TicTacToeWeb</display-name>
-    <description>
-        Project No: 02 — Tic Tac Toe Web Game using Java Servlet and JSP.
-        Week 3: GameServlet registered with /play and /reset URL mappings.
-        Week 4: index.jsp clickable board added; GameServlet.doPost()
-        implements the PRG pattern with defensive row/col validation.
-    </description>
+    <description>Tic-Tac-Toe Web Game using Java Servlet and JSP</description>
 
-    <!-- ============================================================
-         Servlet declaration
-         Maps the servlet name to the fully-qualified Java class.
-         The class must exist in src/main/java/com/tictactoe/
-         ============================================================ -->
+    <!-- Servlet Configuration -->
     <servlet>
         <servlet-name>GameServlet</servlet-name>
         <servlet-class>com.tictactoe.GameServlet</servlet-class>
     </servlet>
 
-    <!-- ============================================================
-         Servlet mappings
-         /play  — receives POST with row and col when a player clicks a cell
-         /reset — receives POST when the player clicks "New Game"
-         Both mappings point to the same GameServlet class.
-         GameServlet.doPost() will check the "action" parameter to
-         decide which behaviour to run (Week 6).
-         ============================================================ -->
+    <!-- URL Mappings -->
     <servlet-mapping>
         <servlet-name>GameServlet</servlet-name>
         <url-pattern>/play</url-pattern>
@@ -41,11 +25,7 @@
         <url-pattern>/reset</url-pattern>
     </servlet-mapping>
 
-    <!-- ============================================================
-         Welcome file
-         Tomcat serves index.jsp when the user visits the root URL:
-         http://localhost:8080/TicTacToeWeb/
-         ============================================================ -->
+    <!-- Welcome File -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
