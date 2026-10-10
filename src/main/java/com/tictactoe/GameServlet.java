@@ -24,6 +24,13 @@ public class GameServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /**
+     * Default constructor for {@code GameServlet}.
+     */
+    public GameServlet() {
+        super();
+    }
+
+    /**
      * Handles HTTP GET requests for direct action triggers (e.g. reset actions via links).
      *
      * @param request  the {@link HttpServletRequest} containing query parameters

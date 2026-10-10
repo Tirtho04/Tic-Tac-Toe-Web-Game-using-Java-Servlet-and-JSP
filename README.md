@@ -5,7 +5,7 @@
 ![Apache Tomcat](https://img.shields.io/badge/Apache%20Tomcat-10.1-F8DC75?style=for-the-badge&logo=apache-tomcat&logoColor=black)
 ![JUnit 5](https://img.shields.io/badge/JUnit-5.10-25A162?style=for-the-badge&logo=junit5&logoColor=white)
 ![Maven](https://img.shields.io/badge/Apache%20Maven-3.9-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
-![Release](https://img.shields.io/badge/Release-v1.0--tested-brightgreen?style=for-the-badge)
+![Release](https://img.shields.io/badge/Release-v1.0--final-brightgreen?style=for-the-badge)
 
 A modern, responsive, two-player **Tic-Tac-Toe Web Application** built from the ground up using the **Model-View-Controller (MVC)** architectural pattern in Java. The application features session-based state management, Post-Redirect-Get (PRG) navigation flow, live match scoreboard tracking, automated JUnit 5 test suites, and an aesthetic dark-themed user interface.
 
@@ -176,7 +176,7 @@ Tic-Tac-Toe-Web-Game-using-Java-Servlet-and-JSP/
 | **Week 7** | **Enhancement** | Session score tracker, live 3-tile scoreboard, Dark Theme UI | ✅ Completed |
 | **Week 8** | **Testing** | `TEST_CASES.md`, JUnit 5 test suite (8 tests), Git tag `v1.0-tested` | ✅ Completed |
 | **Week 9** | **Submission** | Javadoc on all classes, `REPORT.md`, finalised `README.md` | ✅ Completed |
-| **Week 10** | **Submission** | Production WAR deployment, GitHub Release, submission demo | 🎯 Ready |
+| **Week 10** | **Submission** | Production WAR deployment, GitHub Release, submission demo | ✅ Completed |
 
 ---
 
